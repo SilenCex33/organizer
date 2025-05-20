@@ -3,8 +3,21 @@ import React, { useState } from "react";
 const VertragForm = () => {
   const [form, setForm] = useState({
     name: "",
-    email: "",
+    vorname: "",
     vertragsnummer: "",
+    strasse: "",
+    hausnummer: "",
+    plz: "",
+    Stadt: "",
+    personalausweisnr: "",
+    ausgestellt_in: "",
+    ausgestellt_am: "",
+    geburtsdatum: "",
+    geburtsort: "",
+    fuehrerscheinnr: "",
+    fuehrerscheinklasse: "",
+    fsausgestellt_in: "",
+    fsausgestellt_am: "",
   });
 
   const handleChange = (e) => {
@@ -168,7 +181,7 @@ const VertragForm = () => {
                 required
               />
             </div>
-            <div className="col-4">
+            <div className="col-1">
               <label className="form-label ">Führerscheinklasse</label>
               <input
                 type="text"
