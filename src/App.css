@@ -1,0 +1,31 @@
+.app-header{
+    background-color: #f8f9fa;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    
+}
+.app-wrapper {
+  display: flex;
+  flex-direction: column; /* Ermöglicht eine vertikale Anordnung */
+  min-height: 100vh; /* Viewport-Höhe */
+}
+
+.app-main {
+  touch-action: none ;
+  flex: 1; /* Nimmt den restlichen Platz ein */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+   
+.nav-user{
+    margin-left: auto!important;
+}
+.app-footer {
+    display: flex; /* Aktiviert das Flexbox-Layout */
+    justify-content: space-between; /* Verteil den Inhalt zwischen den Rändern */
+    align-items: center; /* Zentriert die Elemente vertikal */
+    padding: 10px 20px; /* Fügt etwas Abstand hinzu */
+  }

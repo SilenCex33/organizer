@@ -1,0 +1,449 @@
+.nav {
+    scale: 1.8;
+}
+.rbc-button-link {
+    pointer-events: none !important; /* Deaktiviert die Mausereignisse */
+    
+}   
+.rbc-calendar {
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  position: relative;
+}
+.react-datepicker {
+    align-self: center; /* Zentriert den DatePicker horizontal */
+    justify-self: center; /* Zentriert den DatePicker vertikal */
+    display: flex; /* Flexbox aktivieren */
+    width: 95%; /* Breite des DatePickers */
+    height: 95%; /* Maximale Höhe */
+    font-size: 16px; /* Schriftgröße */
+    background-color: #f8f9fa; /* Hellgrauer Hintergrund */
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    margin-top: 5%;
+}
+.react-datepicker__header {
+    background-color: #007bff; /* Header-Hintergrundfarbe */
+    color: white; /* Header-Textfarbe */
+    border-bottom: 1px solid #ddd;
+    padding: 10px;
+    display: flex; /* Flexbox aktivieren */
+    justify-content: center; /* Zentriert den Inhalt horizontal */
+    align-items: center; /* Zentriert den Inhalt vertikal */
+    position: relative; /* Ermöglicht absolute Positionierung der Navigation */
+}
+.react-datepicker__navigation {
+   content: none;
+}
+.react-datepicker__navigation::before{
+    content: ''; /* Leeres Pseudo-Element für Pfeil */
+    border-style: solid; /* Pfeil-Stil */
+    border-width: 5px 5px 0 0; /* Pfeilgröße */
+    display: block; /* Block-Element */
+    width: 0; /* Breite auf 0 setzen */
+    height: 0; /* Höhe auf 0 setzen */
+    transform: rotate(45deg); /* Pfeil drehen */
+}
+/* Entferne die Standard-Pseudo-Elemente */
+.react-datepicker__navigation--next::before,
+.react-datepicker__navigation--previous::before {
+    content: none; /* Entfernt die Standard-Pseudo-Elemente */
+}
+/* Neue Pseudo-Elemente erstellen */
+.react-datepicker__navigation--next,
+.react-datepicker__navigation--previous {
+    background: none; /* Entfernt Standardhintergrund */
+    border: none; /* Entfernt Standardrahmen */
+    width: 40px; /* Breite des Navigationsbereichs */
+    height: 40px; /* Höhe des Navigationsbereichs */
+    cursor: pointer; /* Zeigt den Mauszeiger als Hand an */
+    position: absolute; /* Absolute Positionierung */
+    top: 50%; /* Vertikale Zentrierung */
+    transform: translateY(-50%); /* Korrektur für vertikale Zentrierung */
+    z-index: 1; /* Stellt sicher, dass sie über anderen Elementen liegen */
+}
+/* Neuer Pfeil für 'Zurück' */
+.react-datepicker__navigation--previous::after {
+    content: '◀'; /* Unicode für einen Pfeil nach links */
+    font-size: 100px; /* Schriftgröße des Pfeils */
+    color: #007bff; /* Farbe des Pfeils */
+    position: absolute;
+    left: 10px;
+}
+/* Neuer Pfeil für 'Weiter' */
+.react-datepicker__navigation--next::after {
+    content: '▶'; /* Unicode für einen Pfeil nach rechts */
+    font-size: 24px; /* Schriftgröße des Pfeils */
+    color: #007bff; /* Farbe des Pfeils */
+    position: absolute;
+    right: 10px;
+}
+.react-datepicker__day--selected {
+    background-color: #007bff; /* Farbe für ausgewählte Tage */
+    color: white;
+    border-radius: 50%; /* Runde Tage */
+}
+.react-datepicker__day--keyboard-selected {
+    background-color: #0056b3; /* Farbe für Tastaturauswahl */
+    color: white;
+    border-radius: 50%; /* Runde Tage */
+}
+.react-datepicker__month-container {
+    padding: 10px;
+    width: 100%;
+    height: 100%;
+    overflow: hidden; /* Verhindert Überlauf */
+    
+}
+.react-datepicker__month-wrapper {
+    display: flex;
+    padding:  10px 50px 10px 50px; /* Abstand oben */
+    width: 100%;
+    height: 80%;
+    overflow: hidden; /* Verhindert Überlauf */
+    align-items: center;
+}
+.react-datepicker__month,
+.react-datepicker__monthPicker{
+    width: 100%; /* Breite der Monate */
+    height: 25%; /* Höhe der Monate */
+}
+.react-datepicker__month-text{
+    display: flex;
+   
+    flex: 1 1 30%; /* Jedes Monat-Feld hat 30% der Breite */
+    height: 100%; /* Feste Höhe für alle Monate */
+    background-color: #f0f0f0; /* Einheitliche Hintergrundfarbe */
+    border: 1px solid #ddd; /* Einheitlicher Rahmen */
+    border-radius: 5px; /* Abgerundete Ecken */
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.5s ease; /* Animation für Hover */
+    color: white;
+    background-color: #007bff;
+    font-size: 16px !important; /* Schriftgröße anpassen */
+    font-weight: bold; /* Fettdruck für bessere Sichtbarkeit */
+    border-radius: 8px;
+    
+    
+}
+.react-datepicker__month-text:hover {
+    background-color: #0056b3;
+}
+.react-datepicker__day-name,
+.react-datepicker__current-month,
+.react-datepicker__month-text {
+    
+    white-space: nowrap; /* Verhindert Zeilenumbrüche */
+    overflow: visible; /* Zeigt den gesamten Text an */
+    text-overflow: clip; /* Kein Abschneiden des Textes */
+    font-size: 14px; /* Schriftgröße anpassen */
+    text-align: center; /* Zentriert den Text */
+}
+.react-datepicker__month-0,
+.react-datepicker__month-1,
+.react-datepicker__month-2,
+.react-datepicker__month-3,
+.react-datepicker__month-4,
+.react-datepicker__month-5,
+.react-datepicker__month-6,
+.react-datepicker__month-7,
+.react-datepicker__month-8,
+.react-datepicker__month-9,
+.react-datepicker__month-10,
+.react-datepicker__month-11 {
+    visibility: hidden; /* Versteckt die Monate */
+    position: relative;
+}
+.react-datepicker__month-0::after {
+    content: "Januar"; /* Überschreibt den Text für Januar */
+    visibility: visible; /* Sichtbar machen */
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center; /* Horizontal zentrieren */
+    align-items: center; /* Vertikal zentrieren */
+    margin: auto !important;
+    color: aliceblue; /* Farbe der Monate */
+    font-size: 16px; /* Schriftgröße der Monate */
+    font-weight: bold; /* Fettdruck für bessere Sichtbarkeit */
+    border-radius: 8px; /* Abgerundete Ecken */
+    background-color: #007bff; /* Hintergrundfarbe der Monate */
+    text-align: center; /* Zentriert den Text */
+    transition: background-color 0.5s ease; /* Animation für Hover */
+    display: flex!important; /* Flexbox aktivieren */
+    justify-content: center !important; /* Zentriert den Inhalt horizontal */ 
+    align-items: center !important; /* Zentriert den Inhalt vertikal */
+    text-align: center !important; /* Zentriert den Text */
+}
+.react-datepicker__month-1::after {
+    content: "Februar"; /* Überschreibt den Text für Februar */
+    visibility: visible; /* Sichtbar machen */
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center; /* Horizontal zentrieren */
+    align-items: center; /* Vertikal zentrieren */
+    margin: auto !important;
+    color: aliceblue; /* Farbe der Monate */
+    font-size: 16px; /* Schriftgröße der Monate */
+    font-weight: bold; /* Fettdruck für bessere Sichtbarkeit */
+    border-radius: 8px; /* Abgerundete Ecken */
+    background-color: #007bff; /* Hintergrundfarbe der Monate */
+    text-align: center; /* Zentriert den Text */
+    transition: background-color 0.5s ease; /* Animation für Hover */
+    display: flex!important; /* Flexbox aktivieren */
+    justify-content: center !important; /* Zentriert den Inhalt horizontal */ 
+    align-items: center !important; /* Zentriert den Inhalt vertikal */
+    text-align: center !important; /* Zentriert den Text */
+}
+.react-datepicker__month-2::after {
+    content: "März"; /* Überschreibt den Text für Februar */
+    visibility: visible; /* Sichtbar machen */
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center; /* Horizontal zentrieren */
+    align-items: center; /* Vertikal zentrieren */
+    margin: auto !important;
+    color: aliceblue; /* Farbe der Monate */
+    font-size: 16px; /* Schriftgröße der Monate */
+    font-weight: bold; /* Fettdruck für bessere Sichtbarkeit */
+    border-radius: 8px; /* Abgerundete Ecken */
+    background-color: #007bff; /* Hintergrundfarbe der Monate */
+    text-align: center; /* Zentriert den Text */
+    transition: background-color 0.5s ease; /* Animation für Hover */
+    display: flex!important; /* Flexbox aktivieren */
+    justify-content: center !important; /* Zentriert den Inhalt horizontal */ 
+    align-items: center !important; /* Zentriert den Inhalt vertikal */
+    text-align: center !important; /* Zentriert den Text */
+}
+.react-datepicker__month-3::after {
+    content: "April"; /* Überschreibt den Text für Januar */
+    visibility: visible; /* Sichtbar machen */
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center; /* Horizontal zentrieren */
+    align-items: center; /* Vertikal zentrieren */
+    margin: auto !important;
+    color: aliceblue; /* Farbe der Monate */
+    font-size: 16px; /* Schriftgröße der Monate */
+    font-weight: bold; /* Fettdruck für bessere Sichtbarkeit */
+    border-radius: 8px; /* Abgerundete Ecken */
+    background-color: #007bff; /* Hintergrundfarbe der Monate */
+    text-align: center; /* Zentriert den Text */
+    transition: background-color 0.5s ease; /* Animation für Hover */
+    display: flex!important; /* Flexbox aktivieren */
+    justify-content: center !important; /* Zentriert den Inhalt horizontal */ 
+    align-items: center !important; /* Zentriert den Inhalt vertikal */
+    text-align: center !important; /* Zentriert den Text */
+}
+.react-datepicker__month-4::after{
+    content: "Mai"; /* Überschreibt den Text für Februar */
+    visibility: visible; /* Sichtbar machen */
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center; /* Horizontal zentrieren */
+    align-items: center; /* Vertikal zentrieren */
+    margin: auto !important;
+    color: aliceblue; /* Farbe der Monate */
+    font-size: 16px; /* Schriftgröße der Monate */
+    font-weight: bold; /* Fettdruck für bessere Sichtbarkeit */
+    border-radius: 8px; /* Abgerundete Ecken */
+    background-color: #007bff; /* Hintergrundfarbe der Monate */
+    text-align: center; /* Zentriert den Text */
+    transition: background-color 0.5s ease; /* Animation für Hover */
+    display: flex!important; /* Flexbox aktivieren */
+    justify-content: center !important; /* Zentriert den Inhalt horizontal */ 
+    align-items: center !important; /* Zentriert den Inhalt vertikal */
+    text-align: center !important; /* Zentriert den Text */
+}
+.react-datepicker__month-5::after {
+    content: "Juni"; /* Überschreibt den Text für Februar */
+    visibility: visible; /* Sichtbar machen */
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center; /* Horizontal zentrieren */
+    align-items: center; /* Vertikal zentrieren */
+    margin: auto !important;
+    color: aliceblue; /* Farbe der Monate */
+    font-size: 16px; /* Schriftgröße der Monate */
+    font-weight: bold; /* Fettdruck für bessere Sichtbarkeit */
+    border-radius: 8px; /* Abgerundete Ecken */
+    background-color: #007bff; /* Hintergrundfarbe der Monate */
+    text-align: center; /* Zentriert den Text */
+    transition: background-color 0.5s ease; /* Animation für Hover */
+    display: flex!important; /* Flexbox aktivieren */
+    justify-content: center !important; /* Zentriert den Inhalt horizontal */ 
+    align-items: center !important; /* Zentriert den Inhalt vertikal */
+    text-align: center !important; /* Zentriert den Text */
+}
+.react-datepicker__month-6::after {
+    content: "Juli"; /* Überschreibt den Text für Januar */
+    visibility: visible; /* Sichtbar machen */
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center; /* Horizontal zentrieren */
+    align-items: center; /* Vertikal zentrieren */
+    margin: auto !important;
+    color: aliceblue; /* Farbe der Monate */
+    font-size: 16px; /* Schriftgröße der Monate */
+    font-weight: bold; /* Fettdruck für bessere Sichtbarkeit */
+    border-radius: 8px; /* Abgerundete Ecken */
+    background-color: #007bff; /* Hintergrundfarbe der Monate */
+    text-align: center; /* Zentriert den Text */
+    transition: background-color 0.5s ease; /* Animation für Hover */
+    display: flex!important; /* Flexbox aktivieren */
+    justify-content: center !important; /* Zentriert den Inhalt horizontal */ 
+    align-items: center !important; /* Zentriert den Inhalt vertikal */
+    text-align: center !important; /* Zentriert den Text */
+}
+.react-datepicker__month-7::after {
+    content: "August"; /* Überschreibt den Text für Februar */
+    visibility: visible; /* Sichtbar machen */
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center; /* Horizontal zentrieren */
+    align-items: center; /* Vertikal zentrieren */
+    margin: auto !important;
+    color: aliceblue; /* Farbe der Monate */
+    font-size: 16px; /* Schriftgröße der Monate */
+    font-weight: bold; /* Fettdruck für bessere Sichtbarkeit */
+    border-radius: 8px; /* Abgerundete Ecken */
+    background-color: #007bff; /* Hintergrundfarbe der Monate */
+    text-align: center; /* Zentriert den Text */
+    transition: background-color 0.5s ease; /* Animation für Hover */
+    display: flex!important; /* Flexbox aktivieren */
+    justify-content: center !important; /* Zentriert den Inhalt horizontal */ 
+    align-items: center !important; /* Zentriert den Inhalt vertikal */
+    text-align: center !important; /* Zentriert den Text */
+}
+.react-datepicker__month-8::after {
+    content: "September"; /* Überschreibt den Text für Februar */
+    visibility: visible; /* Sichtbar machen */
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center; /* Horizontal zentrieren */
+    align-items: center; /* Vertikal zentrieren */
+    margin: auto !important;
+    color: aliceblue; /* Farbe der Monate */
+    font-size: 16px; /* Schriftgröße der Monate */
+    font-weight: bold; /* Fettdruck für bessere Sichtbarkeit */
+    border-radius: 8px; /* Abgerundete Ecken */
+    background-color: #007bff; /* Hintergrundfarbe der Monate */
+    text-align: center; /* Zentriert den Text */
+    transition: background-color 0.5s ease; /* Animation für Hover */
+    display: flex!important; /* Flexbox aktivieren */
+    justify-content: center !important; /* Zentriert den Inhalt horizontal */ 
+    align-items: center !important; /* Zentriert den Inhalt vertikal */
+    text-align: center !important; /* Zentriert den Text */
+}
+.react-datepicker__month-9::after {
+    content: "Oktober"; /* Überschreibt den Text für Januar */
+    visibility: visible; /* Sichtbar machen */
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center; /* Horizontal zentrieren */
+    align-items: center; /* Vertikal zentrieren */
+    margin: auto !important;
+    color: aliceblue; /* Farbe der Monate */
+    font-size: 16px; /* Schriftgröße der Monate */
+    font-weight: bold; /* Fettdruck für bessere Sichtbarkeit */
+    border-radius: 8px; /* Abgerundete Ecken */
+    background-color: #007bff; /* Hintergrundfarbe der Monate */
+    text-align: center; /* Zentriert den Text */
+    transition: background-color 0.5s ease; /* Animation für Hover */
+    display: flex!important; /* Flexbox aktivieren */
+    justify-content: center !important; /* Zentriert den Inhalt horizontal */ 
+    align-items: center !important; /* Zentriert den Inhalt vertikal */
+    text-align: center !important; /* Zentriert den Text */
+}
+.react-datepicker__month-10::after {
+    content: "November"; /* Überschreibt den Text für Februar */
+    visibility: visible; /* Sichtbar machen */
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center; /* Horizontal zentrieren */
+    align-items: center; /* Vertikal zentrieren */
+    margin: auto !important;
+    color: aliceblue; /* Farbe der Monate */
+    font-size: 16px; /* Schriftgröße der Monate */
+    font-weight: bold; /* Fettdruck für bessere Sichtbarkeit */
+    border-radius: 8px; /* Abgerundete Ecken */
+    background-color: #007bff; /* Hintergrundfarbe der Monate */
+    text-align: center; /* Zentriert den Text */
+    transition: background-color 0.5s ease; /* Animation für Hover */
+    display: flex!important; /* Flexbox aktivieren */
+    justify-content: center !important; /* Zentriert den Inhalt horizontal */ 
+    align-items: center !important; /* Zentriert den Inhalt vertikal */
+    text-align: center !important; /* Zentriert den Text */
+}
+.react-datepicker__month-11::after {
+    content: "Dezember"; /* Überschreibt den Text für Februar */
+    visibility: visible; /* Sichtbar machen */
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center; /* Horizontal zentrieren */
+    align-items: center; /* Vertikal zentrieren */
+    margin: auto !important;
+    color: aliceblue; /* Farbe der Monate */
+    font-size: 16px; /* Schriftgröße der Monate */
+    font-weight: bold; /* Fettdruck für bessere Sichtbarkeit */
+    border-radius: 8px; /* Abgerundete Ecken */
+    background-color: #007bff; /* Hintergrundfarbe der Monate */
+    text-align: center; /* Zentriert den Text */
+    transition: background-color 0.5s ease; /* Animation für Hover */
+    display: flex!important; /* Flexbox aktivieren */
+    justify-content: center !important; /* Zentriert den Inhalt horizontal */ 
+    align-items: center !important; /* Zentriert den Inhalt vertikal */
+    text-align: center !important; /* Zentriert den Text */
+}
