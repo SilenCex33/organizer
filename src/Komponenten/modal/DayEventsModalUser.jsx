@@ -83,7 +83,7 @@ const DayEventsModalUser = ({ events, onUpdate, fetchEventDetails }) => {
                     >
                       <i className="bi bi-trash"></i>
                     </button>
-                    <button className="btn btn-primary btn-sm " disabled>
+                    <button className="btn btn-primary btn-sm ">
                       <i className="bi bi-pencil"></i>
                     </button>
                     <button
@@ -97,7 +97,9 @@ const DayEventsModalUser = ({ events, onUpdate, fetchEventDetails }) => {
                     </button>
                     <button
                       className="btn btn-success btn-sm"
-                      onClick={() => navigate("/vertrag")}
+                      onClick={() =>
+                        navigate("/vertrag", { state: { uid: event.id } })
+                      }
                     >
                       <i className="bi bi-currency-euro"></i>
                     </button>
