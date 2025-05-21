@@ -98,7 +98,12 @@ const DayEventsModalUser = ({ events, onUpdate, fetchEventDetails }) => {
                     <button
                       className="btn btn-success btn-sm"
                       onClick={() =>
-                        navigate("/vertrag", { state: { uid: event.id } })
+                        navigate("/vertrag", {
+                          state: {
+                            uid: event.id,
+                            eventData: event, // <--- alle Eventdaten übergeben
+                          },
+                        })
                       }
                     >
                       <i className="bi bi-currency-euro"></i>
