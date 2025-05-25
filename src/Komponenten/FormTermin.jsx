@@ -14,23 +14,25 @@ import { isValidPhoneNumber } from "../utils/validationUtils";
 import { getExtraKmPackages } from "../utils/packageUtil";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
 
-function FormTermin({ onSubmit, onClose }) {
-  const [formData, setFormData] = useState({
-    kunde: "privat",
-    vehicle: "",
-    name: "",
-    firstName: "",
-    phoneNumber: "",
-    dateStart: getCurrentDate(),
-    dateEnd: getCurrentDate(),
-    timeStart: "06:00",
-    timeEnd: "22:00",
-    preis: 0,
-    freiKm: 0,
-    info: "",
-    extraOption: "",
-    extraKm: 0,
-  });
+function FormTermin({ onSubmit, onClose, initialData, isEdit }) {
+  const [formData, setFormData] = useState(
+    initialData || {
+      kunde: "privat",
+      vehicle: "",
+      name: "",
+      firstName: "",
+      phoneNumber: "",
+      dateStart: getCurrentDate(),
+      dateEnd: getCurrentDate(),
+      timeStart: "06:00",
+      timeEnd: "22:00",
+      preis: 0,
+      freiKm: 0,
+      info: "",
+      extraOption: "",
+      extraKm: 0,
+    }
+  );
 
   const [extraKmPackages, setExtraKmPackages] = useState([]);
   const [packageOptions, setPackageOptions] = useState([]);
@@ -84,171 +86,76 @@ function FormTermin({ onSubmit, onClose }) {
     loadExtraKmPackages();
   }, [formData.vehicle, categorizedVehicles]);
 
-  // --- Neuer Effekt: Preise und Pakete bei Kundenwechsel aktualisieren ---
   useEffect(() => {
-    const updatePricingBasedOnCustomerType = async () => {
-      if (!formData.vehicle) return;
+    if (initialData && Object.keys(categorizedVehicles).length > 0) {
+      setFormData(initialData);
+      performInitialBerechnung(initialData);
+    }
+  }, [initialData, categorizedVehicles]);
 
-      const isBusiness = formData.kunde === "geschäftlich";
-      const vehicleGroup = findVehicleGroupById(
-        formData.vehicle,
-        categorizedVehicles
-      );
+  const performInitialBerechnung = async (data) => {
+    if (!data.vehicle) return;
 
-      // Fahrzeugpreis neu berechnen
-      const priceData = await calculatePriceAndKm(
-        formData,
-        loadedVehicles,
-        isBusiness
-      );
+    const isBusiness = data.kunde === "geschäftlich";
+    const vehicleGroup = findVehicleGroupById(
+      data.vehicle,
+      categorizedVehicles
+    );
+    const priceData = await calculatePriceAndKm(
+      data,
+      loadedVehicles,
+      isBusiness
+    );
+    const preisProKm = await fetchExtraKmPrice(vehicleGroup, isBusiness);
+    const zusatzKmPreis = parseFloat((data.extraKm * preisProKm).toFixed(2));
 
-      // Zusatzpakete neu laden
-      const packages = await getExtraKmPackages(vehicleGroup, isBusiness);
+    let infoText = `${priceData.type} - ${priceData.preis} € (${priceData.freiKm} km frei)`;
 
-      // Auswahl-Option erneut finden (falls vorhanden)
-      let selectedOption = null;
-      if (formData.extraOption) {
-        try {
-          const parsedOption = JSON.parse(formData.extraOption);
-          selectedOption = packages.find(
-            (p) => p.km === parsedOption.km && p.price === parsedOption.price
-          );
-        } catch (e) {
-          console.warn("Fehler beim Parsen der Zusatzoption:", e);
-        }
-      }
+    if (
+      priceData.details &&
+      ![
+        "5-Stunden-Basis-Preis",
+        "Tagesbasis-Preis",
+        "Wochenbasis-Preis",
+        "Monatsbasis-Preis",
+        "24-Stunden-Basis-Preis",
+        "7-Tage-Basis-Preis",
+        "30-Tage-Basis-Preis",
+      ].includes(priceData.type)
+    ) {
+      infoText += `\n${priceData.details}`;
+    }
 
-      // Preis pro km laden
-      const preisProKm = await fetchExtraKmPrice(vehicleGroup, isBusiness);
-      setCurrentPreisProKm(preisProKm);
-      const zusatzKmPreis = (formData.extraKm * preisProKm).toFixed(2);
+    if (data.extraOption) {
+      try {
+        const parsedOption = JSON.parse(data.extraOption);
+        infoText += `\nZusatzoption: ${parsedOption.km} km - ${parsedOption.price} €`;
+      } catch (e) {}
+    }
 
-      // Info-Feld neu zusammensetzen
-      let newInfo = (
-        `${priceData.type} - ${priceData.preis} € (${priceData.freiKm} km frei)` +
-        (priceData.details &&
-        ![
-          "5-Stunden-Basis-Preis",
-          "Tagesbasis-Preis",
-          "Wochenbasis-Preis",
-          "Monatsbasis-Preis",
-          "24-Stunden-Basis-Preis",
-          "7-Tage-Basis-Preis",
-          "30-Tage-Basis-Preis",
-        ].includes(priceData.type)
-          ? `\n${priceData.details}`
-          : "")
-      ).trim();
+    if (data.extraKm > 0) {
+      infoText += `\nZusatz-km: ${data.extraKm} km - ${zusatzKmPreis} €`;
+    }
 
-      if (selectedOption) {
-        newInfo += `\nZusatzoption: ${selectedOption.km} km - ${selectedOption.price} €`;
-      }
+    const total =
+      priceData.preis +
+      (data.extraOption ? JSON.parse(data.extraOption).price : 0) +
+      zusatzKmPreis;
 
-      if (formData.extraKm > 0) {
-        newInfo += `\nZusatz-km: ${formData.extraKm} km - ${zusatzKmPreis} €`;
-      }
+    const totalKm =
+      priceData.freiKm +
+      (data.extraOption ? JSON.parse(data.extraOption).km : 0) +
+      (data.extraKm || 0);
 
-      // Daten übernehmen
-      setFormData((prev) => ({
-        ...prev,
-        preis: priceData.preis,
-        freiKm: priceData.freiKm,
-        info: newInfo.trim(),
-      }));
+    infoText += `\n__________________________________________________________________\nGesamtpreis: ${total.toFixed(2)} € / Gesamtkilometer: ${totalKm.toFixed(0)} km`;
 
-      // Zusatzpakete neu setzen
-      setExtraKmPackages(packages);
-    };
-
-    updatePricingBasedOnCustomerType();
-  }, [formData.kunde]);
-
-  useEffect(() => {
-    const updateInfo = async () => {
-      if (!formData.vehicle) return;
-
-      const isBusiness = formData.kunde === "geschäftlich";
-      const vehicleGroup = findVehicleGroupById(
-        formData.vehicle,
-        categorizedVehicles
-      );
-
-      const priceData = await calculatePriceAndKm(
-        formData,
-        loadedVehicles,
-        isBusiness
-      );
-      const preisProKm = await fetchExtraKmPrice(vehicleGroup, isBusiness);
-      setCurrentPreisProKm(preisProKm);
-
-      const zusatzKmPreis = parseFloat(
-        (formData.extraKm * preisProKm).toFixed(2)
-      );
-
-      let basePrice = priceData.preis;
-      let packagePrice = 0;
-      let total = basePrice;
-
-      let infoText = `${priceData.type} - ${basePrice} € (${priceData.freiKm} km frei)`;
-      if (
-        priceData.details &&
-        ![
-          "5-Stunden-Basis-Preis",
-          "Tagesbasis-Preis",
-          "Wochenbasis-Preis",
-          "Monatsbasis-Preis",
-          "24-Stunden-Basis-Preis",
-          "7-Tage-Basis-Preis",
-          "30-Tage-Basis-Preis",
-        ].includes(priceData.type)
-      ) {
-        infoText += `\n${priceData.details}`;
-      }
-
-      if (formData.extraOption) {
-        try {
-          const parsedOption = JSON.parse(formData.extraOption);
-          packagePrice = parseFloat(parsedOption.price);
-          infoText += `\nZusatzoption: ${parsedOption.km} km - ${packagePrice} €`;
-          total += packagePrice;
-        } catch (e) {
-          console.warn("Fehler beim Parsen der Zusatzoption:", e);
-        }
-      }
-
-      if (formData.extraKm > 0) {
-        infoText += `\nZusatz-km: ${formData.extraKm} km - ${zusatzKmPreis} €`;
-        total += zusatzKmPreis;
-      }
-
-      const totalKm =
-        priceData.freiKm +
-        (formData.extraOption ? JSON.parse(formData.extraOption).km : 0) +
-        (formData.extraKm || 0);
-
-      infoText += `
-__________________________________________________________________
-Gesamtpreis: ${total.toFixed(2)} € / Gesamtkilometer: ${totalKm.toFixed(0)} km`;
-
-      setFormData((prev) => ({
-        ...prev,
-        preis: total,
-        freiKm: priceData.freiKm,
-        info: infoText.trim(),
-      }));
-    };
-
-    updateInfo();
-  }, [
-    formData.vehicle,
-    formData.dateStart,
-    formData.dateEnd,
-    formData.timeStart,
-    formData.timeEnd,
-    formData.kunde,
-    formData.extraOption,
-    formData.extraKm,
-  ]);
+    setFormData((prev) => ({
+      ...prev,
+      preis: total,
+      freiKm: priceData.freiKm,
+      info: infoText.trim(),
+    }));
+  };
 
   const fetchExtraKmPrice = async (vehicleGroup, isBusiness = false) => {
     if (!vehicleGroup) return 0;
@@ -280,6 +187,7 @@ Gesamtpreis: ${total.toFixed(2)} € / Gesamtkilometer: ${totalKm.toFixed(0)} km
   const handleInputChangeWrapper = (e) => {
     handleInputChange(e, setFormData);
   };
+
   const findVehicleGroupById = (vehicleId, categorizedVehicles) => {
     for (const category in categorizedVehicles) {
       for (const vehicle of categorizedVehicles[category]) {
@@ -293,26 +201,37 @@ Gesamtpreis: ${total.toFixed(2)} € / Gesamtkilometer: ${totalKm.toFixed(0)} km
 
   return (
     <div className="container-flex mt-4">
-      <h2 className="text-center mb-4">Termin erstellen</h2>
+      <h2 className="text-center mb-4">
+        {isEdit ? "Termin bearbeiten" : "Termin erstellen"}
+      </h2>
       <form onSubmit={handleSubmit}>
         <div className="row mb-3">
           <div className="col-6 mt-3 border-r-2 border-gray-400">
-            <div className="mb-3">
-              <label htmlFor="kunde" className="form-label">
-                Kunde
-              </label>
-              <select
-                className="form-select"
-                id="kunde"
-                name="kunde"
-                value={formData.kunde}
-                onChange={(e) =>
-                  setFormData({ ...formData, kunde: e.target.value })
-                }
-              >
-                <option value="privat">Privat</option>
-                <option value="geschäftlich">Geschäftlich</option>
-              </select>
+            <div className="row">
+              <div className="col-6">
+                <div className="mb-3">
+                  <label htmlFor="kunde" className="form-label">
+                    Kunde
+                  </label>
+                  <select
+                    className="form-select"
+                    id="kunde"
+                    name="kunde"
+                    value={formData.kunde}
+                    onChange={(e) =>
+                      setFormData({ ...formData, kunde: e.target.value })
+                    }
+                  >
+                    <option value="privat">Privat</option>
+                    <option value="geschäftlich">Geschäftlich</option>
+                  </select>
+                </div>
+              </div>
+              <div className="col-6">
+                <button className="btn btn-primary mt-8 ms-4 " disabled>
+                  <i className="bi bi-person"></i>
+                </button>
+              </div>
             </div>
 
             <div className="row mb-3">
@@ -620,7 +539,7 @@ Gesamtpreis: ${total.toFixed(2)} € / Gesamtkilometer: ${totalKm.toFixed(0)} km
             formData.dateStart + formData.timeStart
           }
         >
-          Erstellen
+          {isEdit ? "Speichern" : "Erstellen"}
         </button>
       </form>
     </div>

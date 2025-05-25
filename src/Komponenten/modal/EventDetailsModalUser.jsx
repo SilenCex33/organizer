@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { db } from "../../firebase"; // Import der Firestore-Instanz
 import { collection, getDocs, doc, getDoc } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
 
 const EventsList = () => {
   const [events, setEvents] = useState([]);
@@ -60,39 +61,109 @@ const EventsList = () => {
             <p>{event.vorname}</p>
             <p>{event.nachname}</p>
             <p>{event.telNr}</p>
-            <p>von: {new Date(event.start.toDate()).toLocaleString("de-DE", { day: "2-digit", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" })}</p>
-            <p>bis: {new Date(event.end.toDate()).toLocaleString("de-DE", { day: "2-digit", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" })}</p>
+            <p>
+              von:{" "}
+              {new Date(event.start.toDate()).toLocaleString("de-DE", {
+                day: "2-digit",
+                month: "long",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </p>
+            <p>
+              bis:{" "}
+              {new Date(event.end.toDate()).toLocaleString("de-DE", {
+                day: "2-digit",
+                month: "long",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </p>
             <p>{event.fahrzeug}</p>
-            <div className="col-6"><p>{event.preis}€/{event.km}km</p></div>
+            <div className="col-6">
+              <p>
+                {event.preis}€/{event.km}km
+              </p>
+            </div>
           </li>
         ))}
       </ul>
       {isEventModalOpen && (
-        <EventDetailsModalUser selectedEvent={selectedEvent} setIsEventModalOpen={setIsEventModalOpen} />
+        <EventDetailsModalUser
+          selectedEvent={selectedEvent}
+          setIsEventModalOpen={setIsEventModalOpen}
+        />
       )}
     </div>
   );
 };
 
 const EventDetailsModalUser = ({ selectedEvent, setIsEventModalOpen }) => {
-  if (!selectedEvent) {
-    return null; // Zeige nichts an, wenn kein Event ausgewählt ist
-  }
+  const navigate = useNavigate();
+
+  if (!selectedEvent) return null;
+
+  const handleEditClick = () => {
+    navigate(`/edit-event/${selectedEvent.id}`, {
+      state: { eventData: selectedEvent },
+    });
+    setIsEventModalOpen(false); // Modal schließen
+  };
 
   return (
     <div className="modal-content bg-white p-4 rounded-lg shadow-lg">
       <h2 className="text-2xl font-bold mb-4 text-center">Event Details</h2>
-      <p><strong>Title:</strong> {selectedEvent.title}</p>
-      <p><strong>Kunde:</strong> {selectedEvent.kunde}</p>
-      <p><strong>Vorname:</strong> {selectedEvent.vorname}</p>
-      <p><strong>Nachname:</strong> {selectedEvent.nachname}</p>
-      <p><strong>Telefonnummer:</strong> {selectedEvent.telNr}</p>
-      <p><strong>Von:</strong> {new Date(selectedEvent.start.toDate()).toLocaleString("de-DE", { day: "2-digit", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" })}</p>
-      <p><strong>Bis:</strong> {new Date(selectedEvent.end.toDate()).toLocaleString("de-DE", { day: "2-digit", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" })}</p>
-      <p><strong>Fahrzeug:</strong> {selectedEvent.fahrzeug}</p>
-      <p><strong>Preis:</strong> {selectedEvent.preis}€ / {selectedEvent.km}km</p>
-      <button className="btn btn-secondary mt-4" onClick={() => setIsEventModalOpen(false)}>
+      <p>
+        <strong>Title:</strong> {selectedEvent.title}
+      </p>
+      <p>
+        <strong>Kunde:</strong> {selectedEvent.kunde}
+      </p>
+      <p>
+        <strong>Vorname:</strong> {selectedEvent.vorname}
+      </p>
+      <p>
+        <strong>Nachname:</strong> {selectedEvent.nachname}
+      </p>
+      <p>
+        <strong>Telefonnummer:</strong> {selectedEvent.telNr}
+      </p>
+      <p>
+        <strong>Von:</strong>{" "}
+        {new Date(selectedEvent.start.toDate()).toLocaleString("de-DE", {
+          day: "2-digit",
+          month: "long",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        })}
+      </p>
+      <p>
+        <strong>Bis:</strong>{" "}
+        {new Date(selectedEvent.end.toDate()).toLocaleString("de-DE", {
+          day: "2-digit",
+          month: "long",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        })}
+      </p>
+      <p>
+        <strong>Fahrzeug:</strong> {selectedEvent.fahrzeug}
+      </p>
+      <p>
+        <strong>Preis:</strong> {selectedEvent.preis}€ / {selectedEvent.km}km
+      </p>
+      <button
+        className="btn btn-secondary mt-4"
+        onClick={() => setIsEventModalOpen(false)}
+      >
         Schließen
+      </button>
+      <button className="btn btn-primary mt-2 ms-2" onClick={handleEditClick}>
+        <i className="bi bi-pencil"></i> Bearbeiten
       </button>
     </div>
   );

@@ -25,7 +25,7 @@ export const calculatePriceAndKm = async (
     .flat()
     .find((v) => v.id === vehicle);
   if (!selectedVehicle) {
-    console.warn("❌ Fahrzeug nicht gefunden:", vehicle);
+    // console.warn("❌ Fahrzeug nicht gefunden:", vehicle);
     return { preis: 0, freiKm: 0, type: "Keine Daten verfügbar" };
   }
 

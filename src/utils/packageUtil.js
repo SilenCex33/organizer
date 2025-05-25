@@ -7,7 +7,7 @@ import { getFirestore, doc, getDoc } from "firebase/firestore";
  */
 export const getExtraKmPackages = async (vehicleGroup, isBusiness = false) => {
   if (!vehicleGroup) {
-    console.warn("Keine Fahrzeuggruppe angegeben.");
+    // console.warn("Keine Fahrzeuggruppe angegeben.");
     return [];
   }
 

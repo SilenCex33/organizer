@@ -83,7 +83,14 @@ const DayEventsModalUser = ({ events, onUpdate, fetchEventDetails }) => {
                     >
                       <i className="bi bi-trash"></i>
                     </button>
-                    <button className="btn btn-primary btn-sm ">
+                    <button
+                      className="btn btn-primary btn-sm"
+                      onClick={() =>
+                        navigate(`/edit-event/${event.id}`, {
+                          state: { eventData: event },
+                        })
+                      }
+                    >
                       <i className="bi bi-pencil"></i>
                     </button>
                     <button
